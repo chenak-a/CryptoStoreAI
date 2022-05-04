@@ -24,15 +24,27 @@ class Datastore(metaclass=SingletonMeta):
     
     def __init__(self, value: Client) -> None:
         self.client = value
-        self.observatory : dict[abstractmethod,list [User]] = {}
-    
+        self.observatory : dict[str, tuple[abstractmethod, list[User]]] = {}
         
-    def connectUserandcoin(self,coin:abstractmethod,user:User) -> Datastore:
-        self.observatory[coin].append(User)
+    
+    def addcoin(self,coin:abstractmethod) -> None:
+        if str(coin) not in self.observatory :
+            self.observatory[str(coin)] = (coin,[])
+       
+      
+    def connectUserandcoin(self,coin:str,user:User) -> Datastore:
+   
+        if coin  in self.observatory:
+            self.observatory[coin][1].append(user)
+        
         return self
     def notify(self,coin:abstractmethod) ->User:
-        for user in self.observatory[coin]:
-            user.buy
+        try:
+            for user in self.observatory[str(coin)][1]:
+                user.update(self.observatory[str(coin)][0])
+        except:
+            self.addcoin(coin)
+       
     def deleteusderconnection(self,coin:abstractmethod) -> Datastore:
         self.observatory[coin].remove(User)
         return self

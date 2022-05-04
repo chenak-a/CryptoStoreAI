@@ -27,20 +27,21 @@ class User(ABC,binanceclient):
         
     
     def addAsset(self,name) -> None:
-        print(name)
         self.portfolio[name] = 0.0
-        print(self.portfolio)
         pass
     
     def removeAsset(self,name) -> None:
         del self.portfolio[name] 
         pass
-    def buy(self) ->None:
+    def buy(self,state) ->None:
+        print("a")
         pass
-    def sell(self) -> None:
+    def sell(self,state) -> None:
+        print("b")
         pass
     
-    def update(self,name ):
+    def update(self,name):
+        
         if name.statement()[0]:
             self.buy(name.statement()[1])
         else:
@@ -52,8 +53,6 @@ class User(ABC,binanceclient):
         assert self.portfolio.values is not None , "list is empty"
         self.totaleBalance = 0
         for coin in self.portfolio:
-            print(coin.split("USDT")[0])
-
             asset = self.get_asset_balance(asset=coin.split("USDT")[0].upper(), recvWindow=9000)['free']
             prince = self.get_klines(symbol=coin,interval = self.KLINE_INTERVAL_1HOUR , limit = 1)[0][4]
             resultAsset = float(asset) * float(prince)

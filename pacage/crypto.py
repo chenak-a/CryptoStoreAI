@@ -54,9 +54,14 @@ class Crypto(Abscrypto):
 
     
     def data(self) -> None:
-        for value in self.list.values():
+        for value  in self.list.values():
             value.data()
-            
+    def notify(self,sell : bool,price :float) -> None:
+        self.sell  = False
+        self.price = price
+        Datastore().notify(self)
+    def statement(self) :
+        return self.sell,self.price
     def getcoin(self, name:str ,heur :str = "") -> None:
         if (self.list.__contains__(name)):
             if heur is "":
@@ -71,7 +76,6 @@ class Coin(Abscrypto):
     def __init__(self,name:str,heur:str) -> None:
         self.name : str = name
         self.heur : str = heur
-        self.sell : bool = False
         
        
         
@@ -90,10 +94,12 @@ class Coin(Abscrypto):
     
     def remove(self, composent: Abscrypto) -> None:
         return super().remove(composent)
-    def statement(self) :
-        return self.sell,0.0
-        ...
+    
+
+        
     def data(self) -> None:
         self.initilization()
-        print(self.dataIn)
+       
+        self.parent.notify(True,self.dataIn["Close"][self.LIMIT-1])
+       
     

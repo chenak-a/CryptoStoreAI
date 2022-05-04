@@ -9,3 +9,5 @@
 .env
 .h5
 .xml
+/pacage/__pycache__/
+misc.xml

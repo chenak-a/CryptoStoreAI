@@ -27,9 +27,12 @@ class Activate:
     def getbalance(self,user) -> Activate:
         self.user[user].balance()
         return self
-    def addcoinUser(self,user,name) -> Activate:
+    def addcoinUser(self,user:str,name :str) -> Activate:
+     
+        Datastore().connectUserandcoin(name,self.user[user])
         self.user[user].addAsset(name)
-        Datastore()
+        
+        
         return self
     def removecoinUser(self,user,name) -> Activate:
         self.user[user].removeAsset(name)
@@ -37,6 +40,7 @@ class Activate:
     def addcoin(self , name : str) -> Activate:
         name = name.upper()
         val = Crypto(name)
+        Datastore().addcoin(val)
         val.add(Coin(name + self.HEUR1H,self.HEUR1H))
         val.add(Coin(name + self.HEUR4H,self.HEUR4H))
         val.add(Coin(name + self.HEUR1D,self.HEUR1D))
@@ -52,8 +56,8 @@ class Activate:
 if __name__ == '__main__':
     valeur = Activate()
     valeur.addUser("me",api_key=os.getenv("APIKEY"),api_secret=os.getenv("APISEC"))
-    valeur.addcoinUser("me","IOTAUSDT").getbalance("me")
-    #valeur.addcoin("FETUSDT").addcoin("IOTAUSDT").data("FETUSDT",valeur.HEUR1H)
+    valeur.addcoin("FETUSDT").addcoin("IOTAUSDT")
+    valeur.addcoinUser("me","FETUSDT").getbalance("me").data("FETUSDT",Activate.HEUR1D)
     
 
     
