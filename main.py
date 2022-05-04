@@ -1,11 +1,11 @@
 from __future__ import annotations
 import os
 from binance.client import Client
-from pacage.crypto import Abscrypto
-from pacage.crypto import Crypto
-from pacage.crypto import Coin
-from pacage.datastore import Datastore
-from pacage.user import User
+from package.crypto import Abscrypto
+from package.crypto import Crypto
+from package.crypto import Coin
+from package.datastore import Datastore
+from package.user import User
 from dotenv import load_dotenv
 load_dotenv('/Users/chena/AI/ai/.idea/.env')
 class Activate: 

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from re import L
 from unicodedata import name
 from typing import List
-from pacage.datastore import Datastore
+from package.datastore import Datastore
 import pandas as pd
 class Abscrypto(ABC):
     
@@ -99,7 +99,6 @@ class Coin(Abscrypto):
         
     def data(self) -> None:
         self.initilization()
-       
-        self.parent.notify(True,self.dataIn["Close"][self.LIMIT-1])
+        self.parent.notify(True,self.dataIn["Close"][len(self.dataIn)-1])
        
     
