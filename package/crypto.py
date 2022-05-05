@@ -7,11 +7,12 @@ from package.datastore import Datastore
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+import json
 import cry
 import os
 from .strategySell import AbsBuySell
 pathName = os.path.join ("C:/Users/chena/AI2.0/CryptoStoreAutomate/model/")
-
+import concurrent.futures
 class Abscrypto(ABC):
     
 
@@ -61,8 +62,11 @@ class Crypto(Abscrypto):
 
     
     def data(self) -> None:
-        for value  in self.list.values():
-            value.data()
+        def calldata(variable):
+            variable.data()
+        with concurrent.futures.ThreadPoolExecutor() as excecuteur:
+            excecuteur.map(calldata,self.list.values()) 
+    
     def notify(self,sell : bool,price :float) -> None:
         self.sell  = False
         self.price = price
@@ -71,7 +75,8 @@ class Crypto(Abscrypto):
         return self.sell,self.price
     def getcoin(self, name:str ,heur :str = "") -> None:
         if (self.list.__contains__(name)):
-            if heur is "":
+            if heur.replace(name,"") is "":
+              
                 self.list.get(name).data()
             else :
                 self.list.get(name).getcoin(heur)
@@ -206,9 +211,9 @@ class Coin(Abscrypto):
                 "amb13", "amb99", "ambi", "amb14", "amb15", "amb0", "amb1", "amb2", "amb3", "ambto"]] / 100)
         Y2 = np.nan_to_num(Y2)
 
-        model55 = tf.keras.models.load_model(pathName+"model_buy55.h5")
-        amb55 = model55.predict(Y2)
-        df["amb55"] = amb55
+        model55 = tf.keras.models.load_model (pathName+"model_b5.h5")
+        amb55 = model55.predict (Y2)
+        df ["amb55"] =   1-cry.prmacd (amb55) / 100
         modelop = tf.keras.models.load_model(pathName+"model_b1.h5")
         ambb = modelop.predict(Y2)
         df["ambb"] = cry.prmacd(ambb) / 100
@@ -228,7 +233,7 @@ class Coin(Abscrypto):
         df["ww1"] = cry.prmacd(df["ww1"]) / 100
         df["ww2"] = ((df["rsi"] - df["prhistogram"]) / 100).ewm(span=2).mean()
         df["ww3"] = ((df['amb'] - df["ambb"])).ewm(span=2).mean()
-        df["ww3"] = 1 - cry.prmacd(df["ww3"]) / 100
+        df["ci"] = 1 - cry.prmacd(df["ww3"]) / 100
         df["ww4"] = ((df["rsiD"] - df["prhistogram"]) / 100).ewm(span=2).mean()
         df["ww5"] = ((df['rsiK'] - df["prmacd"]) / 100).ewm(span=2).mean()
         df["ww6"] = df['rsi'] - df["prhistogram"]
@@ -260,14 +265,7 @@ class Coin(Abscrypto):
 
         esa = df["Close"].ewm(span=5, adjust=False).mean()
         d = abs(df["Close"] - esa).ewm(span=5, adjust=False).mean()
-        ci = (df["Close"] - esa) / (0.1 * d)
-        ab = ci.ewm(span=5, adjust=False).mean()
-
-        df["ci1"] = ab.rolling(window=15).mean()
-        df["ci2"] = cry.macd(df["ci1"], "macd")
-        df["ci"] = cry.pentevolosc(df["ci1"], "T")
-
-        df["ci"] = cry.prmacd(df["ci"][50:]).ewm(span=10).mean() / 100
+       
         df["ww8"] = (df["BUY2"] - df["ambb5"]).ewm(span=2).mean()
         df["ww8"] = cry.prmacd(df["ww8"])
         self.dataIn = df
@@ -275,6 +273,15 @@ class Coin(Abscrypto):
     def __str__(self) -> str:
         return self.name
     
+    def json(self):
+        completeName = os.path.join(os.getenv("SERVER"), "temp.json")
+        name = {"name": str(self.parent)}
+        time = {"time": self.heur}
+        z = json.loads(self.dataIn.to_json())
+        z.update(name)
+        z.update(time)
+        with open(completeName, 'w') as f:
+            json.dump(z, f)
     
     def add(self, composent: Abscrypto) -> None:
         return super().add(composent)
@@ -284,7 +291,8 @@ class Coin(Abscrypto):
     
     def data(self) -> None:
         self.initilization()
+        self.json()
         self.parent.notify(True,self.dataIn["Close"][len(self.dataIn)-1])
-        print( self.dataIn)
+        print( self.name)
        
     
