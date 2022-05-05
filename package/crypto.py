@@ -1,8 +1,9 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from multiprocessing.connection import wait
 from re import L
 from unicodedata import name
-from typing import List
+from typing import Iterable, List
 from package.datastore import Datastore
 import pandas as pd
 import numpy as np
@@ -10,7 +11,7 @@ import tensorflow as tf
 import json
 import cry
 import os
-from .strategySell import AbsBuySell
+from .strategyBuySell import AbsBuySell
 pathName = os.path.join ("C:/Users/chena/AI2.0/CryptoStoreAutomate/model/")
 import concurrent.futures
 class Abscrypto(ABC):
@@ -36,13 +37,15 @@ class Abscrypto(ABC):
     
 
     @abstractmethod
-    def data(self) -> None:
+    def data(self) -> dict:
         pass
     
 class Crypto(Abscrypto):
     def __init__(self,name:str) -> None:
-        self.list : dict = {}
+        self.container : dict = {}
         self.name :str = name
+        self.containterdata : tuple[(str,pd.DataFrame)] = ()
+        
         
     def __str__(self) -> str:
         return self.name
@@ -50,48 +53,78 @@ class Crypto(Abscrypto):
     def add (self ,composent : Abscrypto ) -> None:
         composent.parent = self
     
-        self.list[str(composent)] = composent
+        self.container[str(composent)] = composent
       
         pass
     
     def remove (self , composent: Abscrypto) -> None:
         composent.parent(None)
-        del self.list[str(composent)] 
+        del self.container[str(composent)] 
+        pass
+    def setcontainerdata(self,data ) -> None:
+        self.containterdata = data
+    def analyser(self ,data : Iterable[tuple]) -> None:
+        
+        self.activateBUYSELL()
+        self.json()
         pass
     
-
-    
-    def data(self) -> None:
-        def calldata(variable):
-            variable.data()
-        with concurrent.futures.ThreadPoolExecutor() as excecuteur:
-            excecuteur.map(calldata,self.list.values()) 
-    
+    def data(self) -> dict:
+        
+        def calldata(variable :Abscrypto) -> dict:
+            return variable.data()
+        with concurrent.futures.ThreadPoolExecutor() as executers:
+            result = executers.map(calldata,self.container.values()) 
+        if self.parent is not None : 
+            self.analyser(result)
+            print(self.name)
+        return self.containterdata
+        
+    def activateBUYSELL(self) ->None:
+        print("aaabbb")
+        self.notify(True,self.containterdata[1]["Close"][len(self.containterdata[1].index)-1])
+        pass
+    def json(self):
+        assert self.containterdata is not None , "containter empty"
+        completeName = os.path.join(os.getenv("SERVER"), "temp.json")
+        name = {"name": str(self.name)}
+        time = {"time" : str(self.containterdata[0].replace(self.name,"") )}
+        #time = {"time": self.containterdata[0].replace()} 
+        z = json.loads(self.containterdata[1].to_json())
+        z.update(name)
+        z.update(time)
+        with open(completeName, 'w') as f:
+            json.dump(z, f)
+        
     def notify(self,sell : bool,price :float) -> None:
         self.sell  = False
         self.price = price
         Datastore().notify(self)
     def statement(self) :
         return self.sell,self.price
-    def getcoin(self, name:str ,heur :str = "") -> None:
-        if (self.list.__contains__(name)):
-            if heur.replace(name,"") is "":
-              
-                self.list.get(name).data()
+    def getcoin(self, name:str ,hour :str = "") -> None:
+    
+        if (self.container.__contains__(name)):
+            if hour.replace(name,"") is "":
+                self.container.get(name).data()
             else :
-                self.list.get(name).getcoin(heur)
-     
+                self.container.get(name).getcoin(hour)
+                self.container.get(name).json()
+                self.container.get(name).activateBUYSELL()
+        
+                
+        
 
     
 class Coin(Abscrypto):
     LIMIT = 300
-    def __init__(self,name:str,heur:str,strategy:AbsBuySell) -> None:
+    def __init__(self,name:str,hour:str,strategy:AbsBuySell) -> None:
         self.name : str = name
-        self.heur : str = heur
+        self.hour : str = hour
         self.strategy : AbsBuySell = strategy
         
-    def initilization(self) ->None:
-        self.dataIn =  pd.DataFrame( Datastore().getclient().get_klines(symbol=self.parent, interval=self.heur, limit=self.LIMIT), dtype=float,columns=["Open time", "Open", "High", "Low", "Close", "Volume", "Close time",
+    def initialization(self) ->None:
+        self.dataIn =  pd.DataFrame( Datastore().getclient().get_klines(symbol=self.parent, interval=self.hour, limit=self.LIMIT), dtype=float,columns=["Open time", "Open", "High", "Low", "Close", "Volume", "Close time",
                               "Quote asset volume",
                               "Number of trades", "Taker buy base asset volume", "Taker buy quote asset volume",
                               "Can be ignored"])
@@ -273,15 +306,6 @@ class Coin(Abscrypto):
     def __str__(self) -> str:
         return self.name
     
-    def json(self):
-        completeName = os.path.join(os.getenv("SERVER"), "temp.json")
-        name = {"name": str(self.parent)}
-        time = {"time": self.heur}
-        z = json.loads(self.dataIn.to_json())
-        z.update(name)
-        z.update(time)
-        with open(completeName, 'w') as f:
-            json.dump(z, f)
     
     def add(self, composent: Abscrypto) -> None:
         return super().add(composent)
@@ -289,10 +313,12 @@ class Coin(Abscrypto):
     def remove(self, composent: Abscrypto) -> None:
         return super().remove(composent)
     
-    def data(self) -> None:
-        self.initilization()
-        self.json()
-        self.parent.notify(True,self.dataIn["Close"][len(self.dataIn)-1])
-        print( self.name)
+    def data(self) -> tuple:
+        self.initialization()
+        dictionerydata = (self.name,self.dataIn)
+        self.parent.setcontainerdata(dictionerydata)
+        print(dictionerydata)
+        return dictionerydata
+      
        
     

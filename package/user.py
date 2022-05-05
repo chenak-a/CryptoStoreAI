@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from binance.client import Client as binanceclient
 
 
+
 class AbsUser(ABC):
     @abstractmethod
     def balance(self) ->int:
@@ -20,17 +21,17 @@ class AbsUser(ABC):
     def sell(self) -> None:
         pass
 class User(ABC,binanceclient):
-    def __init__(self,api_key ="", api_secret="") -> None:
+    def __init__(self,api_key , api_secret) -> None:
         binanceclient.__init__(self,api_key,api_secret)
         self.portfolio :dict[str,float] = {}
         self.totaleBalance = 0
         
     
-    def addAsset(self,name) -> None:
+    def addAsset(self,name :str) -> None:
         self.portfolio[name] = 0.0
         pass
     
-    def removeAsset(self,name) -> None:
+    def removeAsset(self,name :str) -> None:
         del self.portfolio[name] 
         pass
     def buy(self,state) ->None:
@@ -40,11 +41,13 @@ class User(ABC,binanceclient):
         print("b")
         pass
     
-    def update(self,name):
-        
+    def update(self,name ):
+        print("eqeqw")
         if name.statement()[0]:
+            print("c")
             self.buy(name.statement()[1])
         else:
+            print("d")
             self.sell(name.statement()[1])
                 
  

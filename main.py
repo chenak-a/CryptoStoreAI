@@ -1,23 +1,26 @@
 from __future__ import annotations
+
 import os
-from binance.client import Client
-from package.crypto import Crypto
-from package.crypto import Coin
-from package.datastore import Datastore
-from package.user import User
-from package.strategySell import BuySellmidTerm
 import time
 
+from binance.client import Client
 from dotenv import load_dotenv
+
+from package.crypto import Coin, Crypto
+from package.datastore import Datastore
+from package.strategyBuySell import BuySellLongTerm, BuySellmidTerm
+from package.user import User
+
 load_dotenv('/Users/chena/AI/ai/.idea/.env')
 class Controller: 
     #short cut to long to write dont ask question
-    HEUR1H = Client.KLINE_INTERVAL_1HOUR
-    HEUR4H = Client.KLINE_INTERVAL_4HOUR
-    HEUR1D = Client.KLINE_INTERVAL_1DAY
+    HOUR1H = Client.KLINE_INTERVAL_1HOUR
+    HOUR4H = Client.KLINE_INTERVAL_4HOUR
+    HOUR1D = Client.KLINE_INTERVAL_1DAY
     def __init__(self) -> None:
         self.user : dict[str,User] = {}
         self.store = Crypto("store")
+        self.store.parent = None
     
         Datastore(Client(api_key=os.getenv("APIKEY"),
                         api_secret=os.getenv("APISEC")))
@@ -42,31 +45,32 @@ class Controller:
     def addcoin(self , name : str) -> Controller:
         name = name.upper()
         val = Crypto(name)
+      
         Datastore().addcoin(val)
-        val.add(Coin(name + self.HEUR1H,self.HEUR1H,BuySellmidTerm()))
-        val.add(Coin(name + self.HEUR4H,self.HEUR4H,BuySellmidTerm()))
-        val.add(Coin(name + self.HEUR1D,self.HEUR1D,BuySellmidTerm()))
+        val.add(Coin(name + self.HOUR1H,self.HOUR1H,BuySellmidTerm()))
+        val.add(Coin(name + self.HOUR4H,self.HOUR4H,BuySellmidTerm()))
+        val.add(Coin(name + self.HOUR1D,self.HOUR1D,BuySellmidTerm()))
         self.store.add(val)
         return self
     
-    def data(self,name:str = "",heur :str = "") -> Controller:
+    def data(self,name:str = "",hour :str = "") -> Controller:
       
         if name is not "":
             print("dsa")
-            self.store.getcoin(name,name+heur)
+            self.store.getcoin(name,name+hour)
         else :
             print("dsacc")
             self.store.data()
         return self
     
-    def getjson(self,name:str = "",heur :str = ""):
-        self.store.getcoin(name,name+heur)
+    def getjson(self,name:str = "",hour :str = ""):
+        self.store.getcoin(name,name+hour)
 def run():
-    userinput = Controller()
-    userinput.addUser("me",api_key=os.getenv("APIKEY"),api_secret=os.getenv("APISEC"))
-    userinput.addcoin("FETUSDT").addcoin("IOTAUSDT")
-    userinput.addcoinUser("me","FETUSDT").getbalance("me").data("IOTAUSDT") 
-    print
+    run = Controller()
+    run.addUser("me",api_key=os.getenv("APIKEY"),api_secret=os.getenv("APISEC"))
+    run.addcoin("FETUSDT").addcoin("IOTAUSDT")
+    run.addcoinUser("me","FETUSDT").getbalance("me").data() 
+    
 if __name__ == '__main__':
     start_time = time.time()
     run()

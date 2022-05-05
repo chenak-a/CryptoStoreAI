@@ -3,4 +3,4 @@ from .crypto import Crypto
 from .crypto import Coin
 from .datastore import Datastore
 from .user import User
-from .strategySell import AbsBuySell
+from .strategyBuySell import AbsBuySell
