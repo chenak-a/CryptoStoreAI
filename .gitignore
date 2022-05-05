@@ -11,3 +11,6 @@
 .xml
 /package/__pycache__/
 misc.xml
+/package/cry.py
+/model/
+.vscode

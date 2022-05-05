@@ -6,6 +6,9 @@ from package.crypto import Crypto
 from package.crypto import Coin
 from package.datastore import Datastore
 from package.user import User
+from package.strategySell import AbsBuySell
+from package.strategySell import BuySellLongTerm
+from package.strategySell import BuySellmidTerm
 from dotenv import load_dotenv
 load_dotenv('/Users/chena/AI/ai/.idea/.env')
 class Activate: 
@@ -41,9 +44,9 @@ class Activate:
         name = name.upper()
         val = Crypto(name)
         Datastore().addcoin(val)
-        val.add(Coin(name + self.HEUR1H,self.HEUR1H))
-        val.add(Coin(name + self.HEUR4H,self.HEUR4H))
-        val.add(Coin(name + self.HEUR1D,self.HEUR1D))
+        val.add(Coin(name + self.HEUR1H,self.HEUR1H,BuySellmidTerm()))
+        val.add(Coin(name + self.HEUR4H,self.HEUR4H,BuySellmidTerm()))
+        val.add(Coin(name + self.HEUR1D,self.HEUR1D,BuySellmidTerm()))
         self.store.add(val)
         return self
     
