@@ -52,7 +52,6 @@ class Crypto(Abscrypto):
     
     def add (self ,composent : Abscrypto ) -> None:
         composent.parent = self
-    
         self.container[str(composent)] = composent
       
         pass
@@ -80,38 +79,34 @@ class Crypto(Abscrypto):
             print(self.name)
         return self.containterdata
         
-    def activateBUYSELL(self) ->None:
-        print("aaabbb")
+    def activateBUYSELL(self) ->Crypto:
         self.notify(True,self.containterdata[1]["Close"][len(self.containterdata[1].index)-1])
-        pass
-    def json(self):
+        return self
+    def json(self) -> Crypto:
         assert self.containterdata is not None , "containter empty"
         completeName = os.path.join(os.getenv("SERVER"), "temp.json")
         name = {"name": str(self.name)}
         time = {"time" : str(self.containterdata[0].replace(self.name,"") )}
-        #time = {"time": self.containterdata[0].replace()} 
         z = json.loads(self.containterdata[1].to_json())
         z.update(name)
         z.update(time)
         with open(completeName, 'w') as f:
             json.dump(z, f)
-        
+        return self
     def notify(self,sell : bool,price :float) -> None:
         self.sell  = False
         self.price = price
         Datastore().notify(self)
     def statement(self) :
         return self.sell,self.price
-    def getcoin(self, name:str ,hour :str = "") -> None:
+    def getcoin(self, name:str ,hour :str = "") -> Crypto:
     
         if (self.container.__contains__(name)):
             if hour.replace(name,"") is "":
                 self.container.get(name).data()
             else :
-                self.container.get(name).getcoin(hour)
-                self.container.get(name).json()
-                self.container.get(name).activateBUYSELL()
-        
+                self.container.get(name).getcoin(hour).json().activateBUYSELL()
+        return self
                 
         
 

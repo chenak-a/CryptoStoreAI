@@ -8,12 +8,13 @@ from dotenv import load_dotenv
 
 from package.crypto import Coin, Crypto
 from package.datastore import Datastore
-from package.strategyBuySell import BuySellLongTerm, BuySellmidTerm
+from package.strategyBuySell import BuySellLongTerm, BuySellshortTerm, BuySellmidTerm
 from package.user import User
 
 load_dotenv('/Users/chena/AI/ai/.idea/.env')
 class Controller: 
     #short cut to long to write dont ask question
+    HOUR15min = Client.KLINE_INTERVAL_15MINUTE
     HOUR1H = Client.KLINE_INTERVAL_1HOUR
     HOUR4H = Client.KLINE_INTERVAL_4HOUR
     HOUR1D = Client.KLINE_INTERVAL_1DAY
@@ -47,9 +48,9 @@ class Controller:
         val = Crypto(name)
       
         Datastore().addcoin(val)
-        val.add(Coin(name + self.HOUR1H,self.HOUR1H,BuySellmidTerm()))
+        val.add(Coin(name + self.HOUR1H,self.HOUR1H,BuySellshortTerm()))
         val.add(Coin(name + self.HOUR4H,self.HOUR4H,BuySellmidTerm()))
-        val.add(Coin(name + self.HOUR1D,self.HOUR1D,BuySellmidTerm()))
+        val.add(Coin(name + self.HOUR1D,self.HOUR1D,BuySellLongTerm()))
         self.store.add(val)
         return self
     
@@ -62,14 +63,12 @@ class Controller:
             print("dsacc")
             self.store.data()
         return self
-    
-    def getjson(self,name:str = "",hour :str = ""):
-        self.store.getcoin(name,name+hour)
+
 def run():
     run = Controller()
     run.addUser("me",api_key=os.getenv("APIKEY"),api_secret=os.getenv("APISEC"))
-    run.addcoin("FETUSDT").addcoin("IOTAUSDT")
-    run.addcoinUser("me","FETUSDT").getbalance("me").data() 
+    run.addcoin("FETUSDT").addcoin("IOTAUSDT").addcoin("BNBUSDT")
+    run.addcoinUser("me","FETUSDT").getbalance("me").data("BNBUSDT",Controller.HOUR1H) 
     
 if __name__ == '__main__':
     start_time = time.time()
