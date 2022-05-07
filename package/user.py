@@ -2,8 +2,6 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from binance.client import Client as binanceclient
 
-
-
 class AbsUser(ABC):
     @abstractmethod
     def balance(self) ->int:
@@ -42,12 +40,10 @@ class User(ABC,binanceclient):
         pass
     
     def update(self,name ):
-        print("eqeqw")
+       
         if name.statement()[0]:
-            print("c")
             self.buy(name.statement()[1])
         else:
-            print("d")
             self.sell(name.statement()[1])
                 
  

@@ -1,15 +1,14 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from multiprocessing.connection import wait
-from re import L
 from unicodedata import name
-from typing import Iterable, List
+from typing import Iterable
+
 from package.datastore import Datastore
 import pandas as pd
 import numpy as np
 import tensorflow as tf
 import json
-import cry
+import package.cry as cry
 import os
 from .strategyBuySell import AbsBuySell
 pathName = os.path.join ("C:/Users/chena/AI2.0/CryptoStoreAutomate/model/")
@@ -62,8 +61,54 @@ class Crypto(Abscrypto):
         pass
     def setcontainerdata(self,data ) -> None:
         self.containterdata = data
-    def analyser(self ,data : Iterable[tuple]) -> None:
+    def combine(self,listpd : pd.DataFrame) :
         
+        list  = listpd[( ( (listpd["Open time"] > self.containterdata[1]["Open time"][0])  & listpd["BUYSELL"] == 1.0) ) | ((listpd["Open time"] > self.containterdata[1]["Open time"][0])  & (listpd["BUYSELL"] == 2.0))  ]
+    
+        y = 0
+        x = []
+        vv = self.containterdata[1]
+        for i in  range(0, len( self.containterdata[1].index)) :
+            print( len( self.containterdata[1].index))
+            print(y)
+            print(len(list.index))
+            if( y < len(list.index)):
+        
+ 
+                if( (self.containterdata[1]["Open time"][i] <= list.iloc[y]["Open time"] ) and  ( self.containterdata[1]["Close time"][i] > list.iloc[y]["Open time"]) ):
+            
+                    self.containterdata[1].at[i,'BUYSELL'] = list.iloc[y]["BUYSELL"]
+                    x.append(i)
+                    print(self.containterdata[1])
+                    y += 1
+            else:
+                break
+        print("--------")
+        for l in range(0, len(x)):
+            print(self.containterdata[1].iloc[[l]])
+            print(vv.iloc[[l]])
+            
+        
+        
+
+    
+        
+        
+    def analyser(self ,data : Iterable[tuple]) -> None:
+        print("hello0")
+        mape = {x:y for x,y in data }
+                
+        self.containterdata = (self.name+"4h",mape[self.name+"4h"])
+        mape.pop(self.name+"4h")
+        print (self.containterdata)
+        for y,x in mape.items():
+            print(y)
+            self.combine(x)
+            print(x)
+        
+        
+         
+       
         self.activateBUYSELL()
         self.json()
         pass
@@ -76,7 +121,7 @@ class Crypto(Abscrypto):
             result = executers.map(calldata,self.container.values()) 
         if self.parent is not None : 
             self.analyser(result)
-            print(self.name)
+          
         return self.containterdata
         
     def activateBUYSELL(self) ->Crypto:
@@ -297,7 +342,9 @@ class Coin(Abscrypto):
         df["ww8"] = (df["BUY2"] - df["ambb5"]).ewm(span=2).mean()
         df["ww8"] = cry.prmacd(df["ww8"])
         self.dataIn = df
+        
         self.dataIn["BUYSELL"] = self.strategy.BuySell(self.dataIn)
+        
     def __str__(self) -> str:
         return self.name
     
@@ -312,7 +359,7 @@ class Coin(Abscrypto):
         self.initialization()
         dictionerydata = (self.name,self.dataIn)
         self.parent.setcontainerdata(dictionerydata)
-        print(dictionerydata)
+ 
         return dictionerydata
       
        

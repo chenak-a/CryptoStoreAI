@@ -8,13 +8,13 @@ from dotenv import load_dotenv
 
 from package.crypto import Coin, Crypto
 from package.datastore import Datastore
-from package.strategyBuySell import BuySellLongTerm, BuySellshortTerm, BuySellmidTerm
+from package.strategyBuySell import BuySellLongTerm, BuySellshortTerm, BuySellmidTerm,BuySellshortTermMin
 from package.user import User
 
 load_dotenv('/Users/chena/AI/ai/.idea/.env')
 class Controller: 
     #short cut to long to write dont ask question
-    HOUR15min = Client.KLINE_INTERVAL_15MINUTE
+    HOUR30min = Client.KLINE_INTERVAL_30MINUTE
     HOUR1H = Client.KLINE_INTERVAL_1HOUR
     HOUR4H = Client.KLINE_INTERVAL_4HOUR
     HOUR1D = Client.KLINE_INTERVAL_1DAY
@@ -48,6 +48,8 @@ class Controller:
         val = Crypto(name)
       
         Datastore().addcoin(val)
+        val.add(Coin(name + self.HOUR30min,self.HOUR30min,BuySellshortTermMin()))
+        
         val.add(Coin(name + self.HOUR1H,self.HOUR1H,BuySellshortTerm()))
         val.add(Coin(name + self.HOUR4H,self.HOUR4H,BuySellmidTerm()))
         val.add(Coin(name + self.HOUR1D,self.HOUR1D,BuySellLongTerm()))
@@ -55,7 +57,7 @@ class Controller:
         return self
     
     def data(self,name:str = "",hour :str = "") -> Controller:
-      
+        name = name.upper()
         if name is not "":
             print("dsa")
             self.store.getcoin(name,name+hour)
@@ -67,8 +69,10 @@ class Controller:
 def run():
     run = Controller()
     run.addUser("me",api_key=os.getenv("APIKEY"),api_secret=os.getenv("APISEC"))
-    run.addcoin("FETUSDT").addcoin("IOTAUSDT").addcoin("BNBUSDT")
-    run.addcoinUser("me","FETUSDT").getbalance("me").data("BNBUSDT",Controller.HOUR1H) 
+    run.addcoin("FETUSDT").addcoin("IOTAUSDT").addcoin("BNBUSdT")
+    while(True):
+        run.addcoinUser("me","FETUSDT").getbalance("me").data("fetusdt") 
+        time.sleep(10000)
     
 if __name__ == '__main__':
     start_time = time.time()

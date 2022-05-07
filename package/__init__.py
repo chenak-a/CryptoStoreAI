@@ -1,6 +1,4 @@
-from .crypto import Abscrypto
-from .crypto import Crypto
-from .crypto import Coin
+from .crypto import Abscrypto,Coin,Crypto
 from .datastore import Datastore
 from .user import User
 from .strategyBuySell import AbsBuySell
