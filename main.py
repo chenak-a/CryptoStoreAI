@@ -62,7 +62,7 @@ class Controller:
             print("dsa")
             self.store.getcoin(name,name+hour)
         else :
-            print("dsacc")
+           
             self.store.data()
         return self
 
@@ -71,7 +71,7 @@ def run():
     run.addUser("me",api_key=os.getenv("APIKEY"),api_secret=os.getenv("APISEC"))
     run.addcoin("FETUSDT").addcoin("IOTAUSDT").addcoin("BNBUSdT")
     while(True):
-        run.addcoinUser("me","FETUSDT").getbalance("me").data("fetusdt") 
+        run.addcoinUser("me","FETUSDT").getbalance("me").data("iotausdt",Controller.HOUR1D)
         time.sleep(10000)
     
 if __name__ == '__main__':

@@ -64,30 +64,18 @@ class Crypto(Abscrypto):
     def combine(self,listpd : pd.DataFrame) :
         
         list  = listpd[( ( (listpd["Open time"] > self.containterdata[1]["Open time"][0])  & listpd["BUYSELL"] == 1.0) ) | ((listpd["Open time"] > self.containterdata[1]["Open time"][0])  & (listpd["BUYSELL"] == 2.0))  ]
-    
+        print(list)
         y = 0
-        x = []
-        vv = self.containterdata[1]
         for i in  range(0, len( self.containterdata[1].index)) :
-            print( len( self.containterdata[1].index))
-            print(y)
-            print(len(list.index))
+            print("num : " + str(y) )
             if( y < len(list.index)):
-        
- 
-                if( (self.containterdata[1]["Open time"][i] <= list.iloc[y]["Open time"] ) and  ( self.containterdata[1]["Close time"][i] > list.iloc[y]["Open time"]) ):
-            
+                while( y < len(list.index) and ((self.containterdata[1]["Open time"][i] <= list.iloc[y]["Open time"] ) and  ( self.containterdata[1]["Close time"][i] > list.iloc[y]["Open time"])) ):
+                    print( "y" + str(y))
                     self.containterdata[1].at[i,'BUYSELL'] = list.iloc[y]["BUYSELL"]
-                    x.append(i)
-                    print(self.containterdata[1])
                     y += 1
             else:
                 break
-        print("--------")
-        for l in range(0, len(x)):
-            print(self.containterdata[1].iloc[[l]])
-            print(vv.iloc[[l]])
-            
+      
         
         
 

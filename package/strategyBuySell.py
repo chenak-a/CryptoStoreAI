@@ -42,6 +42,7 @@ class BuySellLongTerm(AbsBuySell):
             #level0b or level123 or level6b or level7b
             if level0b or level123 or level6b or level7b:
                 situation4.append(1.0)
+            #sellT1
             elif (sellT1):
                 situation4.append(2.0)
             else:
@@ -85,6 +86,7 @@ class BuySellmidTerm(AbsBuySell):
             #level0b or level123 or level6b or level7b
             if level0b or level123 or level6b or level7b:
                 situation4.append(1.0)
+            #sellT1
             elif (sellT1):
                 situation4.append(2.0)
             else:
@@ -112,16 +114,21 @@ class BuySellshortTerm(AbsBuySell):
             level4h = df["amb14"][mn] >= 0.55 and df["amb2"][mn] >= 0.75 and df["aroonu"][mn] >= 92 and df["ambb5"][
                 mn] >= 0.70 and df["rsiK"][mn] >= 0.82 and df["ci"][mn] >= 0.73
             sellT1 = sellT0 or level4h or level3h
+            level5mh = df ["BUY2"] [mn] <=0.94 and df ["amb2"] [mn] >=0.30 and   df ["amb13"] [mn] >= 0.18 and   df ["amb0"] [mn] >= 0.45
+            level126 =  df["amb55"][mn] >= 0.90 and  df["rsiK"][mn] >= 0.95 and  df["ci"][mn] >= 0.75 and df["amb13"][mn] <= 0.1
+            level6mh = df ["amb13"] [mn] >= 0.75 and df ["amb14"] [mn] >= 0.70 and df ["amb15"] [mn] >= 0.70 and df ["amb55"] [mn] >= 0.55 and df ["aroonu"] [mn] >= 92 and df ["aroond"] [mn] <= 30 and df ["ambb5"] [mn] >= 0.75 and df ["ci"] [mn] >= 0.75 and df ["rsiK"] [mn] >= 0.83  and df ["amb99"] [mn] >= 0.18
+            sellT2 = sellT1 or level5mh or level6mh
             level0b = df ["ww1"] [mn] <= 0.3  and df ["aroond"] [mn] >= 92   and df ["amb13"] [mn] <= 0.1 and  df ["ci"] [mn] >= 0.40 and  df ["BUY2"] [mn] >= 0.95 
             level123 =  df ["ww1"] [mn] <= 0.01 and df ["amb99"] [mn] <= 0.01
             level5b = df ["ww1"] [mn] <= 0.1  and  df ["ww7"] [mn] >= 0.5 and df ["aroond"] [mn] >= 92  and  df ["ci"] [mn] <= 0.20
             level6b = df ["ww1"] [mn] <= 0.1  and  df ["ww7"] [mn] >= 0.5 and  df ["BUY2"] [mn] <= 0.1
             level7b = df ["ww1"] [mn] <= 0.6  and  df ["ww7"] [mn] >= 0.9 and  df ["BUY2"] [mn] <= 0.15 and df ["aroond"] [mn] >= 92
             # level6b or level7b
-            if  level6b or level7b   :
+            if  level6b or level7b    :
 
                 situation4.append(1.0)
-            elif (sellT1):
+            #sellT2
+            elif (sellT1  ):
                 situation4.append(2.0)
             else:
                 situation4.append(0.0)
@@ -147,6 +154,7 @@ class BuySellshortTermMin(AbsBuySell):
             level3h = df["amb13"][mn] >= 0.67 and df["amb14"][mn] >= 0.67 and df["amb2"][mn] >= 0.80
             level4h = df["amb14"][mn] >= 0.55 and df["amb2"][mn] >= 0.75 and df["aroonu"][mn] >= 92 and df["ambb5"][
                 mn] >= 0.70 and df["rsiK"][mn] >= 0.82 and df["ci"][mn] >= 0.73
+            level126 =  df["amb55"][mn] >= 0.80 and  df["rsiK"][mn] >= 0.95 and  df["ci"][mn] >= 0.70
             level0b = df ["ww1"] [mn] <= 0.3  and df ["aroond"] [mn] >= 92   and df ["amb13"] [mn] <= 0.1 and  df ["ci"] [mn] >= 0.40 and  df ["BUY2"] [mn] >= 0.95 
             level123 =  df ["ww1"] [mn] <= 0.01 and df ["amb99"] [mn] <= 0.01
             level5b = df ["ww1"] [mn] <= 0.1  and  df ["ww7"] [mn] >= 0.5 and df ["aroond"] [mn] >= 92  and  df ["ci"] [mn] <= 0.20
@@ -155,8 +163,8 @@ class BuySellshortTermMin(AbsBuySell):
             level112b =  df ["amb1111"][mn] >=0.001 and  df ["ambb"][mn] <=0.1 and df ["aroond"] [mn] >= 92 and df ["amb99"] [mn] <= 0.03 and df ["amb55"] [mn] <= 0.07
             if level0b or level123 or level5b or level6b or level7b  :
                 situation4.append(1.0)
-            #level7 or level15 or level0
-            elif ( level7 or level15 or level0):
+            #level7 or level15 or level0 or level126
+            elif (supertop):
                 situation4.append(2.0)
             else:
                 situation4.append(0.0)
