@@ -1,14 +1,19 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
+from cProfile import label
+from re import I
 from unicodedata import name
 from typing import Iterable
-
+from datetime import datetime
 from package.datastore import Datastore
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+import matplotlib.pyplot as plt
 import json
 import package.cry as cry
+import matplotlib.dates as md
+
 import os
 from .strategyBuySell import AbsBuySell
 pathName = os.path.join ("C:/Users/chena/AI2.0/CryptoStoreAutomate/model/")
@@ -63,42 +68,148 @@ class Crypto(Abscrypto):
         self.containterdata = data
     def combine(self,listpd : pd.DataFrame) :
         
-        list  = listpd[( ( (listpd["Open time"] > self.containterdata[1]["Open time"][0])  & listpd["BUYSELL"] == 1.0) ) | ((listpd["Open time"] > self.containterdata[1]["Open time"][0])  & (listpd["BUYSELL"] == 2.0))  ]
-        print(list)
+        list = listpd[ (listpd["Open time"] > self.containterdata[1]["Open time"][0])   ]
+  
         y = 0
-        for i in  range(0, len( self.containterdata[1].index)) :
-            print("num : " + str(y) )
+        i = 0
+        x = []
+        m = []
+        z = []
+        p = []
+        o = []
+        while i < len( self.containterdata[1].index) :
+         
             if( y < len(list.index)):
-                while( y < len(list.index) and ((self.containterdata[1]["Open time"][i] <= list.iloc[y]["Open time"] ) and  ( self.containterdata[1]["Close time"][i] > list.iloc[y]["Open time"])) ):
-                    print( "y" + str(y))
-                    self.containterdata[1].at[i,'BUYSELL'] = list.iloc[y]["BUYSELL"]
-                    y += 1
+                if self.containterdata[1]["Open time"][i] < list.iloc[y]["Open time"]:
+                    """ print(" i : "+str(i))
+                    print(" y : "+str(y))
+                    print("opentime 4h a: "+ str( datetime.fromtimestamp (int (self.containterdata[1]["Open time"][i] / 1000))))
+                    print("opentime 1d a: "+ str(datetime.fromtimestamp (list.iloc[y]["Open time"]/ 1000)))                      
+                    print("closetime 1d a: "+ str(datetime.fromtimestamp (list.iloc[y]["Close time"]/ 1000)))
+                    print("Closetime 4h a: "+ str(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000)))
+                    print("BUY 4h a:" + str(self.containterdata[1].at[i,'BUYSELL']))
+                    print("Buy 1d a; "+ str(list.iloc[y]["BUYSELL"]))
+                    print("amb55 1d a; "+ str(list.iloc[y]["amb55"])) """
+                    print("amb55 4h a; "+ str(self.containterdata[1].at[i,"amb55"]))
+                    x.append(self.containterdata[1].at[i,"amb55"])
+                    m.append(list.iloc[y]["amb55"])
+                    z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
+                    p.append(list.iloc[y]["BUY2"])
+                    o.append(self.containterdata[1].at[i,"BUY2"])
+                    i += 1
+                else:
+                    """ print(" i : "+str(i))
+                    print(" y : "+str(y)) """
+                 
+                    if(  ((self.containterdata[1]["Open time"][i] >= list.iloc[y]["Open time"] ) and  ( self.containterdata[1]["Close time"][i] <= list.iloc[y]["Close time"])) ):
+                        """ print("inlavel")
+                        print(" i : "+str(i))
+                        print(" y : "+str(y)) """
+                       
+                        """ print("opentime 4h b: "+ str( datetime.fromtimestamp (int (self.containterdata[1]["Open time"][i] / 1000))))
+                        print("opentime 1d b: "+ str(datetime.fromtimestamp (list.iloc[y]["Open time"]/ 1000)))
+                        print("closetime 1d b: "+ str(datetime.fromtimestamp (list.iloc[y]["Close time"]/ 1000)))
+                        print("Closetime 4h b: "+ str(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000)))
+                        print("BUY 4h b:" + str(self.containterdata[1].at[i,'BUYSELL']))
+                        print("Buy 1d b; "+ str(list.iloc[y]["BUYSELL"]))
+                        print("amb55 1d b; "+ str(list.iloc[y]["amb55"]))
+                        print("amb55 4h b; "+ str(self.containterdata[1].at[i,"amb55"]))
+                        print(spcanamb555) """
+                  
+                   
+                        # and list.iloc[y]["amb55"] >= 0.2 and spcanamb555.iloc[y] > spcanamb552.iloc[y]
+                        if (self.containterdata[1].at[i,'BUYSELL'] == 1.0 and list.iloc[y]["amb55"] <= 0.8 and list.iloc[y]["amb55"] >= 0.2) and (self.containterdata[1].at[i,'BUYSELL'] == 1.0 ):
+                            self.containterdata[1].at[i,'BUYSELL'] = 0.0
+                        x.append(self.containterdata[1].at[i,"amb55"])
+                        m.append(list.iloc[y]["amb55"])
+                        z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
+                        p.append(list.iloc[y]["BUY2"])
+                        o.append(self.containterdata[1].at[i,"BUY2"])
+                        i += 1 
+                      
+                    else:
+                        x.append(self.containterdata[1].at[i,"amb55"])
+                        m.append(list.iloc[y]["amb55"])
+                        z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
+                        p.append(list.iloc[y]["BUY2"])
+                        o.append(self.containterdata[1].at[i,"BUY2"])
+                        y += 1
+             
             else:
                 break
-      
-        
-        
+ 
+        plt.subplot(3,1,1)
+        plt.plot(z,m)
+        plt.subplot(3,1,2)
+        plt.plot(z,p)
+        plt.plot(z,o)
 
     
         
+    def combinedown(self,listpd : pd.DataFrame) :
+        #self.containterdata[1][ (self.containterdata[1]["Open time"] > listpd["Open time"][0])   ]
+        list = self.containterdata[1]
+        i = 0
+        y = 0
+        x = []
+        m = []
+        z = []
+        o = []
+      
+        while i < len( list.index) :
+            if( y < len(listpd.index)):
+                if list.iloc[i]["Open time"] > listpd.iloc[y]["Open time"]:
+                    x.append(list.iloc[i]["amb55"])
+                    m.append(listpd.iloc[y]["amb55"])
+                    z.append(datetime.fromtimestamp (list.iloc[i]["Open time"]/ 1000))
+                    o.append(listpd.iloc[y]["BUY2"])
+                   
+                    y += 1
+                else:
+                    if(  ((list.iloc[i]["Open time"] <= listpd.iloc[y]["Open time"] ) and  ( list.iloc[i]["Close time"] >= listpd.iloc[y]["Close time"])) ):
+                        x.append(list.iloc[i]["amb55"])
+                        m.append(listpd.iloc[y]["amb55"])
+                        z.append(datetime.fromtimestamp (list.iloc[i]["Open time"]/ 1000))
+                        o.append(listpd.iloc[y]["BUY2"])
+               
+                        y += 1 
+                    else:
+                        x.append(list.iloc[i]["amb55"])
+                        m.append(listpd.iloc[y]["amb55"])
+                        z.append(datetime.fromtimestamp (list.iloc[i]["Open time"]/ 1000))
+                        o.append(listpd.iloc[y]["BUY2"])
+                    
+                        i += 1
+            else:
+                break
+        plt.subplot(3,1,1)
+        plt.plot(z,x)
+    
+        plt.subplot(3,1,2)
+       
+        plt.plot(z,o)
+        plt.subplot(3,1,3)
+        plt.plot(list['BUYSELL'])
+     
+    
+        
+                
+        pass
         
     def analyser(self ,data : Iterable[tuple]) -> None:
-        print("hello0")
         mape = {x:y for x,y in data }
-                
         self.containterdata = (self.name+"4h",mape[self.name+"4h"])
         mape.pop(self.name+"4h")
-        print (self.containterdata)
-        for y,x in mape.items():
-            print(y)
-            self.combine(x)
-            print(x)
-        
+        self.combine(mape[self.name+"1d"])
+        self.combine(mape[self.name+"3d"])
+        self.combinedown(mape[self.name+"1h"])
+        self.combinedown(mape[self.name+"30m"])
         
          
        
         self.activateBUYSELL()
         self.json()
+        plt.show()
         pass
     
     def data(self) -> dict:
@@ -152,6 +263,7 @@ class Coin(Abscrypto):
         self.strategy : AbsBuySell = strategy
         
     def initialization(self) ->None:
+        #endTime  =1535774400000
         self.dataIn =  pd.DataFrame( Datastore().getclient().get_klines(symbol=self.parent, interval=self.hour, limit=self.LIMIT), dtype=float,columns=["Open time", "Open", "High", "Low", "Close", "Volume", "Close time",
                               "Quote asset volume",
                               "Number of trades", "Taker buy base asset volume", "Taker buy quote asset volume",
