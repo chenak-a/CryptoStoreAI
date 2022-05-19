@@ -55,6 +55,7 @@ class BuySellLongTerm(AbsBuySell):
 class BuySellmidTerm(AbsBuySell):
     def BuySell(self,df : df) -> list:
         situation4 = []
+        lagestammb5 = np.array(df['ambb5'].nlargest(n=50))[49]
 
         for mn in range(len(df.index)):
             level0 = df["amb13"][mn] >= 0.95 and df["amb14"][mn] >= 0.95 and df["amb2"][mn] >= 0.85 and df["amb0"][
@@ -79,15 +80,15 @@ class BuySellmidTerm(AbsBuySell):
             sellT2 = sellT1 or level5mh or level6mh or level126
             level0b = df ["ww1"] [mn] <= 0.3  and df ["aroond"] [mn] >= 92   and df ["amb13"] [mn] <= 0.1 and  df ["ci"] [mn] >= 0.40 and  df ["BUY2"] [mn] >= 0.95 
             level123 =  df ["ww1"] [mn] <= 0.01 and df ["amb99"] [mn] <= 0.01
-            level5b =  df ["amb55"] [mn] <= 0.15 and   df ["ambb5"] [mn] >= 0.55 and   df ["ci"] [mn] <= 0.05 and df["BUY2"][mn] >=0.95
+            level5b =  df ["amb55"] [mn] <= 0.15 and   df ["ambb5"] [mn] >= 0.55 and   df ["ci"] [mn] <= 0.05
             level6b = df ["ww1"] [mn] <= 0.1  and  df ["ww7"] [mn] >= 0.5 and  df ["BUY2"] [mn] <= 0.1
             level7b = df ["ww1"] [mn] <= 0.6  and  df ["ww7"] [mn] >= 0.9 and  df ["BUY2"] [mn] <= 0.15 and df ["aroond"] [mn] >= 92
             level8b =  df ["amb55"] [mn] <= 0.15 and   df ["ambb5"] [mn] >= 0.72 and   df ["ci"] [mn] <= 0.1
             level9b = df ["amb55"] [mn] <= 0.2 and df ["amb15"] [mn] >= 0.65 and df ["amb15"] [mn] >= 0.65 and df ["amb14"] [mn] >= 0.6 and df ["amb13"] [mn] >= 0.5 and  df["rsiK"][mn] <= 30.0
             level11b = df ["amb13"] [mn] <= 0.2 and df ["amb14"] [mn] <= 0.2 and  df ["amb15"] [mn] >= 0.5 and df ["amb55"] [mn] <= 0.55 and df ["ci"] [mn] <= 0.06
             level1b=  df ["amb14"] [mn] >= 0.6 and df ["amb55"] [mn] <= 0.2 and  df ["ci"] [mn] <= 0.2
-            #level0b or //level123  or /level6b or level7b or level1b or level11b or level9b or level8b or level5b
-            if level5b :
+            
+            if level0b or level123  or level6b or level7b or level1b or level11b or level9b or level8b or level5b:
                 situation4.append(1.0)
             elif sellT2 or (df["BUY2"][mn] <= 0.1 and df["amb55"][mn] >= 0.8) or (df["ci"][mn] >= 0.90 and df["amb55"][mn] >= 0.90 and df["amb13"][mn] >= 0.6) :
                 situation4.append(2.0)

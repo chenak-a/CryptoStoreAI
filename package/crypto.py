@@ -75,46 +75,23 @@ class Crypto(Abscrypto):
         x = []
         m = []
         z = []
-        p = []
-        o = []
+    
         while i < len( self.containterdata[1].index) :
          
             if( y < len(list.index)):
                 if self.containterdata[1]["Open time"][i] < list.iloc[y]["Open time"]:
-                    """ print(" i : "+str(i))
-                    print(" y : "+str(y))
-                    print("opentime 4h a: "+ str( datetime.fromtimestamp (int (self.containterdata[1]["Open time"][i] / 1000))))
-                    print("opentime 1d a: "+ str(datetime.fromtimestamp (list.iloc[y]["Open time"]/ 1000)))                      
-                    print("closetime 1d a: "+ str(datetime.fromtimestamp (list.iloc[y]["Close time"]/ 1000)))
-                    print("Closetime 4h a: "+ str(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000)))
-                    print("BUY 4h a:" + str(self.containterdata[1].at[i,'BUYSELL']))
-                    print("Buy 1d a; "+ str(list.iloc[y]["BUYSELL"]))
-                    print("amb55 1d a; "+ str(list.iloc[y]["amb55"])) """
+        
                     print("amb55 4h a; "+ str(self.containterdata[1].at[i,"amb55"]))
                     x.append(self.containterdata[1].at[i,"amb55"])
                     m.append(list.iloc[y]["amb55"])
                     z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
-                    p.append(list.iloc[y]["BUY2"])
-                    o.append(self.containterdata[1].at[i,"BUY2"])
+                    
                     i += 1
                 else:
-                    """ print(" i : "+str(i))
-                    print(" y : "+str(y)) """
+               
                  
                     if(  ((self.containterdata[1]["Open time"][i] >= list.iloc[y]["Open time"] ) and  ( self.containterdata[1]["Close time"][i] <= list.iloc[y]["Close time"])) ):
-                        """ print("inlavel")
-                        print(" i : "+str(i))
-                        print(" y : "+str(y)) """
-                       
-                        """ print("opentime 4h b: "+ str( datetime.fromtimestamp (int (self.containterdata[1]["Open time"][i] / 1000))))
-                        print("opentime 1d b: "+ str(datetime.fromtimestamp (list.iloc[y]["Open time"]/ 1000)))
-                        print("closetime 1d b: "+ str(datetime.fromtimestamp (list.iloc[y]["Close time"]/ 1000)))
-                        print("Closetime 4h b: "+ str(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000)))
-                        print("BUY 4h b:" + str(self.containterdata[1].at[i,'BUYSELL']))
-                        print("Buy 1d b; "+ str(list.iloc[y]["BUYSELL"]))
-                        print("amb55 1d b; "+ str(list.iloc[y]["amb55"]))
-                        print("amb55 4h b; "+ str(self.containterdata[1].at[i,"amb55"]))
-                        print(spcanamb555) """
+      
                   
                    
                         # and list.iloc[y]["amb55"] >= 0.2 and spcanamb555.iloc[y] > spcanamb552.iloc[y]
@@ -123,16 +100,12 @@ class Crypto(Abscrypto):
                         x.append(self.containterdata[1].at[i,"amb55"])
                         m.append(list.iloc[y]["amb55"])
                         z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
-                        p.append(list.iloc[y]["BUY2"])
-                        o.append(self.containterdata[1].at[i,"BUY2"])
                         i += 1 
                       
                     else:
                         x.append(self.containterdata[1].at[i,"amb55"])
                         m.append(list.iloc[y]["amb55"])
                         z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
-                        p.append(list.iloc[y]["BUY2"])
-                        o.append(self.containterdata[1].at[i,"BUY2"])
                         y += 1
              
             else:
@@ -140,9 +113,12 @@ class Crypto(Abscrypto):
  
         plt.subplot(3,1,1)
         plt.plot(z,m)
+        plt.legend();
         plt.subplot(3,1,2)
-        plt.plot(z,p)
-        plt.plot(z,o)
+        plt.plot(listpd["BUY2"])
+        plt.plot(self.containterdata[1]["BUY2"])
+        plt.legend();
+        
 
     
         
@@ -154,40 +130,34 @@ class Crypto(Abscrypto):
         x = []
         m = []
         z = []
-        o = []
-      
         while i < len( list.index) :
             if( y < len(listpd.index)):
                 if list.iloc[i]["Open time"] > listpd.iloc[y]["Open time"]:
                     x.append(list.iloc[i]["amb55"])
                     m.append(listpd.iloc[y]["amb55"])
                     z.append(datetime.fromtimestamp (list.iloc[i]["Open time"]/ 1000))
-                    o.append(listpd.iloc[y]["BUY2"])
-                   
                     y += 1
                 else:
                     if(  ((list.iloc[i]["Open time"] <= listpd.iloc[y]["Open time"] ) and  ( list.iloc[i]["Close time"] >= listpd.iloc[y]["Close time"])) ):
                         x.append(list.iloc[i]["amb55"])
                         m.append(listpd.iloc[y]["amb55"])
                         z.append(datetime.fromtimestamp (list.iloc[i]["Open time"]/ 1000))
-                        o.append(listpd.iloc[y]["BUY2"])
-               
                         y += 1 
                     else:
                         x.append(list.iloc[i]["amb55"])
                         m.append(listpd.iloc[y]["amb55"])
                         z.append(datetime.fromtimestamp (list.iloc[i]["Open time"]/ 1000))
-                        o.append(listpd.iloc[y]["BUY2"])
-                    
                         i += 1
             else:
                 break
+            
         plt.subplot(3,1,1)
         plt.plot(z,x)
-    
+        plt.plot(z,m)
+        plt.legend();
         plt.subplot(3,1,2)
-       
-        plt.plot(z,o)
+        #plt.plot(listpd["BUY2"])
+        plt.legend();
         plt.subplot(3,1,3)
         plt.plot(list['BUYSELL'])
      
@@ -200,16 +170,16 @@ class Crypto(Abscrypto):
         mape = {x:y for x,y in data }
         self.containterdata = (self.name+"4h",mape[self.name+"4h"])
         mape.pop(self.name+"4h")
-        self.combine(mape[self.name+"1d"])
         self.combine(mape[self.name+"3d"])
+        self.combine(mape[self.name+"1d"])
+  
         self.combinedown(mape[self.name+"1h"])
         self.combinedown(mape[self.name+"30m"])
-        
+        plt.show()
          
        
         self.activateBUYSELL()
         self.json()
-        plt.show()
         pass
     
     def data(self) -> dict:
@@ -263,7 +233,6 @@ class Coin(Abscrypto):
         self.strategy : AbsBuySell = strategy
         
     def initialization(self) ->None:
-        #endTime  =1535774400000
         self.dataIn =  pd.DataFrame( Datastore().getclient().get_klines(symbol=self.parent, interval=self.hour, limit=self.LIMIT), dtype=float,columns=["Open time", "Open", "High", "Low", "Close", "Volume", "Close time",
                               "Quote asset volume",
                               "Number of trades", "Taker buy base asset volume", "Taker buy quote asset volume",
