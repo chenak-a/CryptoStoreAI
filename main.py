@@ -10,6 +10,7 @@ from package.crypto import Coin, Crypto
 from package.datastore import Datastore
 from package.strategyBuySell import BuySellLongTerm, BuySellshortTerm, BuySellmidTerm,BuySellshortTermMin
 from package.user import User
+from package.correction import CorrectionLayer1
 
 load_dotenv('/Users/chena/AI/ai/.idea/.env')
 class Controller: 
@@ -46,22 +47,19 @@ class Controller:
         return self
     def addcoin(self , name : str) -> Controller:
         name = name.upper()
-        val = Crypto(name)
+        val = Crypto(name,CorrectionLayer1())
       
         Datastore().addcoin(val)
-        val.add(Coin(name + self.HOUR30min,self.HOUR30min,BuySellshortTermMin()))
         
-        val.add(Coin(name + self.HOUR1H,self.HOUR1H,BuySellshortTerm()))
         val.add(Coin(name + self.HOUR4H,self.HOUR4H,BuySellmidTerm()))
-        val.add(Coin(name + self.HOUR3D,self.HOUR3D,BuySellLongTerm()))
-        val.add(Coin(name + self.HOUR1D,self.HOUR1D,BuySellLongTerm()))
+        val.add(Coin(name + self.HOUR3D,self.HOUR3D,BuySellLongTerm(),12))
+        val.add(Coin(name + self.HOUR1D,self.HOUR1D,BuySellLongTerm(),4))
         self.store.add(val)
         return self
     
     def data(self,name:str = "",hour :str = "") -> Controller:
         name = name.upper()
         if name is not "":
-            print("dsa")
             self.store.getcoin(name,name+hour)
         else :
            
@@ -73,7 +71,7 @@ def run():
     run.addUser("me",api_key=os.getenv("APIKEY"),api_secret=os.getenv("APISEC"))
     run.addcoin("FETUSDT").addcoin("IOTAUSDT").addcoin("bnbusdt").addcoin("nknusdt").addcoin("ethusdt").addcoin("BTCUSDT").addcoin("lunausdt")
     while(True):
-        run.addcoinUser("me","FETUSDT").getbalance("me").data("lunausdt")
+        run.addcoinUser("me","FETUSDT").getbalance("me").data("BTCUSDT")
         time.sleep(10000)
     
 if __name__ == '__main__':

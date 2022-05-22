@@ -13,3 +13,4 @@ misc.xml
 .vscode
 .venv
 /model
+/package/cry.py

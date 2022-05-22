@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import json
 import package.cry as cry
 import matplotlib.dates as md
-
+from .correction import AbsCorrection
 import os
 from .strategyBuySell import AbsBuySell
 pathName = os.path.join ("C:/Users/chena/AI2.0/CryptoStoreAutomate/model/")
@@ -45,10 +45,11 @@ class Abscrypto(ABC):
         pass
     
 class Crypto(Abscrypto):
-    def __init__(self,name:str) -> None:
+    def __init__(self,name:str ,correctionlayer : AbsCorrection  = None) -> None:
         self.container : dict = {}
         self.name :str = name
-        self.containterdata : tuple[(str,pd.DataFrame)] = ()
+        self.containterdata : tuple[(str,pd.DataFrame,int)] = ()
+        self.correctionlayer :AbsCorrection = correctionlayer
         
         
     def __str__(self) -> str:
@@ -84,8 +85,6 @@ class Crypto(Abscrypto):
                     
                     i += 1
                 else:
-               
-                 
                     if(  ((self.containterdata[1]["Open time"][i] >= list.iloc[y]["Open time"] ) and  ( self.containterdata[1]["Close time"][i] <= list.iloc[y]["Close time"])) ):
                         m.append(list.iloc[y]["amb55"])
                         z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
@@ -97,25 +96,15 @@ class Crypto(Abscrypto):
              
             else:
                 break
-        listdata = [datetime.fromtimestamp (x/ 1000) for x in self.containterdata[1]["Close time"] ]
         data ={'time': z, 'pk': m}
         dfa = pd.DataFrame(data = data)
-        #plt.plot(dfa["time"],dfa["pk"])
         self.containterdata[1]["pk"+name] = dfa["pk"]
         self.containterdata[1]["pck"+name] = dfa["pk"].pct_change(periods=10).ewm(com=comin).mean()
    
-        #plt.subplot(3,1,1)
-        #plt.plot(z,self.containterdata[1]["pk"+name])
-        #plt.plot(dfa["time"], self.containterdata[1]["pck"+name] )
-        #plt.subplot(3,1,2)
-        #plt.plot(listdata,listpd["BUY2"])
-        #plt.plot(listdata,self.containterdata[1]["BUY2"])
-        #plt.subplot(3,1,3)
-        #plt.ylim(top=1 ,bottom = -1)
+   
        
     def correction(self) -> None:
         buysell = self.containterdata[1][self.containterdata[1]["BUYSELL"] == 1.0]
-        print(buysell)
         
         for x in buysell.index:
             if ((self.containterdata[1].at[x,'pck1d']  < 0.2 and self.containterdata[1].at[x,'pk3d']  > 0.2 )  or (self.containterdata[1].at[x,'pck1d']  < 0.1 and self.containterdata[1].at[x,'pck3d']  < 0.1 ) )  :
@@ -124,31 +113,24 @@ class Crypto(Abscrypto):
                  self.containterdata[1].at[x,'BUYSELL'] = 1.0
             if x <= 50:
                  self.containterdata[1].at[x,'BUYSELL'] = 0.0
-        
-        
-   
-
-        
- 
-    
-  
-    
-        
-        
+        print(buysell)
+                
     def analyser(self ,data : Iterable[tuple]) -> None:
-        mape = {x:y for x,y in data }
-        self.containterdata = (self.name+"4h",mape[self.name+"4h"])
-        mape.pop(self.name+"4h")
-        self.combine(mape[self.name+"1d"],4,"1d")
-        self.combine(mape[self.name+"3d"],12,"3d")
-        self.correction()
-      
-      
-         
+        i = 0
+        for x,y,z in data:
+            if i == 0 :
+                self.containterdata = (x,y,z)
+            else:
+                self.combine(y,z,x.replace(self.name,""))
+                
+            i +=1
+        
+    
+        self.containterdata[1].append(self.correctionlayer.correction(self.containterdata[1])) 
        
         self.activateBUYSELL()
         self.json()
-        #plt.show()
+      
         pass
     
     def data(self) -> dict:
@@ -163,6 +145,7 @@ class Crypto(Abscrypto):
         return self.containterdata
         
     def activateBUYSELL(self) ->Crypto:
+        print("aa")
         self.notify(True,self.containterdata[1]["Close"][len(self.containterdata[1].index)-1])
         return self
     def json(self) -> Crypto:
@@ -204,10 +187,11 @@ class Crypto(Abscrypto):
     
 class Coin(Abscrypto):
     LIMIT = 300
-    def __init__(self,name:str,hour:str,strategy:AbsBuySell) -> None:
+    def __init__(self,name:str,hour:str,strategy:AbsBuySell,com :int = 0) -> None:
         self.name : str = name
         self.hour : str = hour
         self.strategy : AbsBuySell = strategy
+        self.com = com
         
     def initialization(self) ->None:
         #endTime=1642222800000
@@ -404,7 +388,7 @@ class Coin(Abscrypto):
     
     def data(self) -> tuple:
         self.initialization()
-        dictionerydata = (self.name,self.dataIn)
+        dictionerydata = (self.name,self.dataIn,self.com)
         self.parent.setcontainerdata(dictionerydata)
  
         return dictionerydata

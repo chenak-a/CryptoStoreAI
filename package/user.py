@@ -40,7 +40,6 @@ class User(ABC,binanceclient):
         pass
     
     def update(self,name ):
-       
         if name.statement()[0]:
             self.buy(name.statement()[1])
         else:

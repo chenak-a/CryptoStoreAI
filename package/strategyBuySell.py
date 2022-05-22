@@ -90,7 +90,7 @@ class BuySellmidTerm(AbsBuySell):
             level11b = df ["amb13"] [mn] <= 0.2 and df ["amb14"] [mn] <= 0.2 and  df ["amb15"] [mn] >= 0.5 and df ["amb55"] [mn] <= 0.55 and df ["ci"] [mn] <= 0.06
             if level0b or level123  or level6b or level7b or level1b or level11b  or level5b or level9b or level8b   :
                 situation4.append(1.0)
-            elif sellT2   or (df["BUY2"][mn] <= 0.1 and df["amb55"][mn] >= 0.8) or (df["ci"][mn] >= 0.90 and df["amb55"][mn] >= 0.90 and df["amb13"][mn] >= 0.6) :
+            elif sellT2   or (df["BUY2"][mn] <= 0.1 and df["amb55"][mn] >= 0.8) or (df["ci"][mn] >= 0.90 and df["amb55"][mn] >= 0.90 and df["amb13"][mn] >= 0.6)  or df ["amb2"] [mn] >= 0.9 and  df["amb13"][mn] >= 0.75 :
                 situation4.append(2.0)
             else:
                 situation4.append(0.0)
