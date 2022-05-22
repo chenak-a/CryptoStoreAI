@@ -7,11 +7,9 @@
 /dataSources/
 /dataSources.local.xml
 .env
-.h5
 .xml
 /package/__pycache__/
 misc.xml
-/package/cry.py
-/model/
 .vscode
 .venv
+/model

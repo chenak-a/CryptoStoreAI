@@ -53,7 +53,7 @@ class Controller:
         
         val.add(Coin(name + self.HOUR1H,self.HOUR1H,BuySellshortTerm()))
         val.add(Coin(name + self.HOUR4H,self.HOUR4H,BuySellmidTerm()))
-        val.add(Coin(name + self.HOUR3D,self.HOUR3D,BuySellmidTerm()))
+        val.add(Coin(name + self.HOUR3D,self.HOUR3D,BuySellLongTerm()))
         val.add(Coin(name + self.HOUR1D,self.HOUR1D,BuySellLongTerm()))
         self.store.add(val)
         return self
@@ -71,9 +71,9 @@ class Controller:
 def run():
     run = Controller()
     run.addUser("me",api_key=os.getenv("APIKEY"),api_secret=os.getenv("APISEC"))
-    run.addcoin("FETUSDT").addcoin("IOTAUSDT").addcoin("bnbusdt").addcoin("nknusdt").addcoin("ethusdt").addcoin("BTCUSDT")
+    run.addcoin("FETUSDT").addcoin("IOTAUSDT").addcoin("bnbusdt").addcoin("nknusdt").addcoin("ethusdt").addcoin("BTCUSDT").addcoin("lunausdt")
     while(True):
-        run.addcoinUser("me","FETUSDT").getbalance("me").data("BTCUSDT")
+        run.addcoinUser("me","FETUSDT").getbalance("me").data("lunausdt")
         time.sleep(10000)
     
 if __name__ == '__main__':

@@ -66,13 +66,12 @@ class Crypto(Abscrypto):
         pass
     def setcontainerdata(self,data ) -> None:
         self.containterdata = data
-    def combine(self,listpd : pd.DataFrame) :
+    def combine(self,listpd : pd.DataFrame,comin :int ,name : str) :
         
         list = listpd[ (listpd["Open time"] > self.containterdata[1]["Open time"][0])   ]
   
         y = 0
         i = 0
-        x = []
         m = []
         z = []
     
@@ -80,10 +79,7 @@ class Crypto(Abscrypto):
          
             if( y < len(list.index)):
                 if self.containterdata[1]["Open time"][i] < list.iloc[y]["Open time"]:
-        
-                    print("amb55 4h a; "+ str(self.containterdata[1].at[i,"amb55"]))
-                    x.append(self.containterdata[1].at[i,"amb55"])
-                    m.append(list.iloc[y]["amb55"])
+                    m.append(0.0)
                     z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
                     
                     i += 1
@@ -91,95 +87,68 @@ class Crypto(Abscrypto):
                
                  
                     if(  ((self.containterdata[1]["Open time"][i] >= list.iloc[y]["Open time"] ) and  ( self.containterdata[1]["Close time"][i] <= list.iloc[y]["Close time"])) ):
-      
-                  
-                   
-                        # and list.iloc[y]["amb55"] >= 0.2 and spcanamb555.iloc[y] > spcanamb552.iloc[y]
-                        if (self.containterdata[1].at[i,'BUYSELL'] == 1.0 and list.iloc[y]["amb55"] <= 0.8 and list.iloc[y]["amb55"] >= 0.2) and (self.containterdata[1].at[i,'BUYSELL'] == 1.0 ):
-                            self.containterdata[1].at[i,'BUYSELL'] = 0.0
-                        x.append(self.containterdata[1].at[i,"amb55"])
                         m.append(list.iloc[y]["amb55"])
                         z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
                         i += 1 
                       
                     else:
-                        x.append(self.containterdata[1].at[i,"amb55"])
-                        m.append(list.iloc[y]["amb55"])
-                        z.append(datetime.fromtimestamp (self.containterdata[1]["Close time"][i]/ 1000))
+                        
                         y += 1
              
             else:
                 break
- 
-        plt.subplot(3,1,1)
-        plt.plot(z,m)
-        plt.legend();
-        plt.subplot(3,1,2)
-        plt.plot(listpd["BUY2"])
-        plt.plot(self.containterdata[1]["BUY2"])
-        plt.legend();
+        listdata = [datetime.fromtimestamp (x/ 1000) for x in self.containterdata[1]["Close time"] ]
+        data ={'time': z, 'pk': m}
+        dfa = pd.DataFrame(data = data)
+        #plt.plot(dfa["time"],dfa["pk"])
+        self.containterdata[1]["pk"+name] = dfa["pk"]
+        self.containterdata[1]["pck"+name] = dfa["pk"].pct_change(periods=10).ewm(com=comin).mean()
+   
+        #plt.subplot(3,1,1)
+        #plt.plot(z,self.containterdata[1]["pk"+name])
+        #plt.plot(dfa["time"], self.containterdata[1]["pck"+name] )
+        #plt.subplot(3,1,2)
+        #plt.plot(listdata,listpd["BUY2"])
+        #plt.plot(listdata,self.containterdata[1]["BUY2"])
+        #plt.subplot(3,1,3)
+        #plt.ylim(top=1 ,bottom = -1)
+       
+    def correction(self) -> None:
+        buysell = self.containterdata[1][self.containterdata[1]["BUYSELL"] == 1.0]
+        print(buysell)
         
+        for x in buysell.index:
+            if ((self.containterdata[1].at[x,'pck1d']  < 0.2 and self.containterdata[1].at[x,'pk3d']  > 0.2 )  or (self.containterdata[1].at[x,'pck1d']  < 0.1 and self.containterdata[1].at[x,'pck3d']  < 0.1 ) )  :
+                self.containterdata[1].at[x,'BUYSELL'] = 0.0
+            if((self.containterdata[1].at[x,'BUY2'] < 0.13  ) or  (self.containterdata[1].at[x,'pk3d']  > 0.1 and self.containterdata[1].at[x,'pck3d']  > 0.1 and self.containterdata[1].at[x,'pck1d'] > 0.1 ) or (self.containterdata[1].at[x,'pk1d']  < 0.15 and self.containterdata[1].at[x,'pck1d']  < -0.4 and self.containterdata[1].at[x,'pk3d']  < 0.11 and self.containterdata[1].at[x,'pck3d']  > -0.1) ):
+                 self.containterdata[1].at[x,'BUYSELL'] = 1.0
+            if x <= 50:
+                 self.containterdata[1].at[x,'BUYSELL'] = 0.0
+        
+        
+   
 
+        
+ 
+    
+  
     
         
-    def combinedown(self,listpd : pd.DataFrame) :
-        #self.containterdata[1][ (self.containterdata[1]["Open time"] > listpd["Open time"][0])   ]
-        list = self.containterdata[1]
-        i = 0
-        y = 0
-        x = []
-        m = []
-        z = []
-        while i < len( list.index) :
-            if( y < len(listpd.index)):
-                if list.iloc[i]["Open time"] > listpd.iloc[y]["Open time"]:
-                    x.append(list.iloc[i]["amb55"])
-                    m.append(listpd.iloc[y]["amb55"])
-                    z.append(datetime.fromtimestamp (list.iloc[i]["Open time"]/ 1000))
-                    y += 1
-                else:
-                    if(  ((list.iloc[i]["Open time"] <= listpd.iloc[y]["Open time"] ) and  ( list.iloc[i]["Close time"] >= listpd.iloc[y]["Close time"])) ):
-                        x.append(list.iloc[i]["amb55"])
-                        m.append(listpd.iloc[y]["amb55"])
-                        z.append(datetime.fromtimestamp (list.iloc[i]["Open time"]/ 1000))
-                        y += 1 
-                    else:
-                        x.append(list.iloc[i]["amb55"])
-                        m.append(listpd.iloc[y]["amb55"])
-                        z.append(datetime.fromtimestamp (list.iloc[i]["Open time"]/ 1000))
-                        i += 1
-            else:
-                break
-            
-        plt.subplot(3,1,1)
-        plt.plot(z,x)
-        plt.plot(z,m)
-        plt.legend();
-        plt.subplot(3,1,2)
-        #plt.plot(listpd["BUY2"])
-        plt.legend();
-        plt.subplot(3,1,3)
-        plt.plot(list['BUYSELL'])
-     
-    
-        
-                
-        pass
         
     def analyser(self ,data : Iterable[tuple]) -> None:
         mape = {x:y for x,y in data }
         self.containterdata = (self.name+"4h",mape[self.name+"4h"])
         mape.pop(self.name+"4h")
-        self.combine(mape[self.name+"3d"])
-        self.combine(mape[self.name+"1d"])
-  
-        self.combinedown(mape[self.name+"1h"])
-        self.combinedown(mape[self.name+"30m"])
-        plt.show()
+        self.combine(mape[self.name+"1d"],4,"1d")
+        self.combine(mape[self.name+"3d"],12,"3d")
+        self.correction()
+      
+      
          
        
         self.activateBUYSELL()
         self.json()
+        #plt.show()
         pass
     
     def data(self) -> dict:
@@ -198,6 +167,14 @@ class Crypto(Abscrypto):
         return self
     def json(self) -> Crypto:
         assert self.containterdata is not None , "containter empty"
+        
+        #delete
+        self.containterdata[1]["ci"] = self.containterdata[1]["pk"+"3d"]
+        self.containterdata[1]["rsiK"] = self.containterdata[1]["pck"+"3d"]*100 
+        self.containterdata[1]["ambb5"] = self.containterdata[1]["ci"]
+        self.containterdata[1]["aroonu"] = self.containterdata[1]["pk"+"1d"]*100 
+        self.containterdata[1]["aroond"] = self.containterdata[1]["pck"+"1d"]*100 
+        ###
         completeName = os.path.join(os.getenv("SERVER"), "temp.json")
         name = {"name": str(self.name)}
         time = {"time" : str(self.containterdata[0].replace(self.name,"") )}
@@ -233,6 +210,7 @@ class Coin(Abscrypto):
         self.strategy : AbsBuySell = strategy
         
     def initialization(self) ->None:
+        #endTime=1642222800000
         self.dataIn =  pd.DataFrame( Datastore().getclient().get_klines(symbol=self.parent, interval=self.hour, limit=self.LIMIT), dtype=float,columns=["Open time", "Open", "High", "Low", "Close", "Volume", "Close time",
                               "Quote asset volume",
                               "Number of trades", "Taker buy base asset volume", "Taker buy quote asset volume",
