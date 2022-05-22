@@ -103,17 +103,7 @@ class Crypto(Abscrypto):
    
    
        
-    def correction(self) -> None:
-        buysell = self.containterdata[1][self.containterdata[1]["BUYSELL"] == 1.0]
-        
-        for x in buysell.index:
-            if ((self.containterdata[1].at[x,'pck1d']  < 0.2 and self.containterdata[1].at[x,'pk3d']  > 0.2 )  or (self.containterdata[1].at[x,'pck1d']  < 0.1 and self.containterdata[1].at[x,'pck3d']  < 0.1 ) )  :
-                self.containterdata[1].at[x,'BUYSELL'] = 0.0
-            if((self.containterdata[1].at[x,'BUY2'] < 0.13  ) or  (self.containterdata[1].at[x,'pk3d']  > 0.1 and self.containterdata[1].at[x,'pck3d']  > 0.1 and self.containterdata[1].at[x,'pck1d'] > 0.1 ) or (self.containterdata[1].at[x,'pk1d']  < 0.15 and self.containterdata[1].at[x,'pck1d']  < -0.4 and self.containterdata[1].at[x,'pk3d']  < 0.11 and self.containterdata[1].at[x,'pck3d']  > -0.1) ):
-                 self.containterdata[1].at[x,'BUYSELL'] = 1.0
-            if x <= 50:
-                 self.containterdata[1].at[x,'BUYSELL'] = 0.0
-        print(buysell)
+
                 
     def analyser(self ,data : Iterable[tuple]) -> None:
         i = 0
