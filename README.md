@@ -1,4 +1,4 @@
-#  CryptoStoreAI (THIS IS DEMO)
+#  CryptoStoreAI (DEMO)
 
 :octocat: CryptoStoreAI is aimed to analyze and react to data variation movements in the stock market and crypto market
 
