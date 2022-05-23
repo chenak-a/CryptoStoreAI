@@ -11,8 +11,8 @@ from package.datastore import Datastore
 from package.strategyBuySell import BuySellLongTerm, BuySellshortTerm, BuySellmidTerm,BuySellshortTermMin
 from package.user import User
 from package.correction import CorrectionLayer1
-
-load_dotenv('/Users/chena/AI/ai/.idea/.env')
+pathNow = os.getcwd()
+load_dotenv(pathNow+"/.env")
 class Controller: 
     #short cut to long to write dont ask question
     HOUR30min = Client.KLINE_INTERVAL_30MINUTE
@@ -71,7 +71,7 @@ def run():
     run.addUser("me",api_key=os.getenv("APIKEY"),api_secret=os.getenv("APISEC"))
     run.addcoin("FETUSDT").addcoin("IOTAUSDT").addcoin("bnbusdt").addcoin("nknusdt").addcoin("ethusdt").addcoin("BTCUSDT").addcoin("lunausdt")
     while(True):
-        run.addcoinUser("me","FETUSDT").getbalance("me").data("BTCUSDT")
+        run.addcoinUser("me","FETUSDT").getbalance("me").data("btcusdt")
         time.sleep(10000)
     
 if __name__ == '__main__':

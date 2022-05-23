@@ -16,7 +16,9 @@ import matplotlib.dates as md
 from .correction import AbsCorrection
 import os
 from .strategyBuySell import AbsBuySell
-pathName = os.path.join ("C:/Users/chena/AI2.0/CryptoStoreAutomate/model/")
+pathHere = os.getcwd()
+
+pathName = os.path.join (pathHere+"/model/")
 import concurrent.futures
 class Abscrypto(ABC):
     
@@ -50,6 +52,7 @@ class Crypto(Abscrypto):
         self.name :str = name
         self.containterdata : tuple[(str,pd.DataFrame,int)] = ()
         self.correctionlayer :AbsCorrection = correctionlayer
+        
         
         
     def __str__(self) -> str:
@@ -102,18 +105,7 @@ class Crypto(Abscrypto):
         self.containterdata[1]["pck"+name] = dfa["pk"].pct_change(periods=10).ewm(com=comin).mean()
    
    
-       
-    def correction(self) -> None:
-        buysell = self.containterdata[1][self.containterdata[1]["BUYSELL"] == 1.0]
-        
-        for x in buysell.index:
-            if ((self.containterdata[1].at[x,'pck1d']  < 0.2 and self.containterdata[1].at[x,'pk3d']  > 0.2 )  or (self.containterdata[1].at[x,'pck1d']  < 0.1 and self.containterdata[1].at[x,'pck3d']  < 0.1 ) )  :
-                self.containterdata[1].at[x,'BUYSELL'] = 0.0
-            if((self.containterdata[1].at[x,'BUY2'] < 0.13  ) or  (self.containterdata[1].at[x,'pk3d']  > 0.1 and self.containterdata[1].at[x,'pck3d']  > 0.1 and self.containterdata[1].at[x,'pck1d'] > 0.1 ) or (self.containterdata[1].at[x,'pk1d']  < 0.15 and self.containterdata[1].at[x,'pck1d']  < -0.4 and self.containterdata[1].at[x,'pk3d']  < 0.11 and self.containterdata[1].at[x,'pck3d']  > -0.1) ):
-                 self.containterdata[1].at[x,'BUYSELL'] = 1.0
-            if x <= 50:
-                 self.containterdata[1].at[x,'BUYSELL'] = 0.0
-        print(buysell)
+
                 
     def analyser(self ,data : Iterable[tuple]) -> None:
         i = 0
@@ -195,7 +187,7 @@ class Coin(Abscrypto):
         
     def initialization(self) ->None:
         #endTime=1642222800000
-        self.dataIn =  pd.DataFrame( Datastore().getclient().get_klines(symbol=self.parent, interval=self.hour, limit=self.LIMIT), dtype=float,columns=["Open time", "Open", "High", "Low", "Close", "Volume", "Close time",
+        self.dataIn =  pd.DataFrame( Datastore().getclient().get_klines(symbol=self.parent,endTime=1642222800000, interval=self.hour, limit=self.LIMIT), dtype=float,columns=["Open time", "Open", "High", "Low", "Close", "Volume", "Close time",
                               "Quote asset volume",
                               "Number of trades", "Taker buy base asset volume", "Taker buy quote asset volume",
                               "Can be ignored"])
