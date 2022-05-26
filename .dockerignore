@@ -1,0 +1,5 @@
+.venv
+.vscode
+**/*.xml
+.git
+.gitignore
