@@ -2,8 +2,9 @@
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
 [![BitCoin](https://badgen.net/badge/icon/bitcoin?icon=bitcoin&label)](https://bitcoin.org)
 [![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://https://docker.com/)
+	
 
-:octocat: CryptoStoreAI is aimed to analyze and react to data variation movements in the stock market and crypto market
+<img src = "https://github.githubassets.com/images/mona-loading-dark.gif" width=20/> CryptoStoreAI is aimed to analyze and react to data variation movements in the stock market and crypto market
 
 ## :hammer_and_wrench: Installation 
 
