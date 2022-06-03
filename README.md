@@ -44,7 +44,7 @@ if __name__ == '__main__':
 ```
 ## :tada: Result
 
-![](https://gateway.pinata.cloud/ipfs/QmdSntAwxj5UBU4HJtPCLoxqDhGjssDLEkESGWhV42Bz2K)
+![](./img/BTCUSDT.PNG)
 ![](http://i.imgur.com/Ssfp7.gif)
 
 
