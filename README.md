@@ -4,7 +4,7 @@
 [![Docker](https://badgen.net/badge/icon/docker?icon=docker&label)](https://https://docker.com/)
 	
 
-<img src = "https://github.githubassets.com/images/mona-loading-dark.gif" width=20/> CryptoStoreAI is aimed to analyze and react to data variation movements in the stock market and crypto market
+<img src = "https://github.githubassets.com/images/mona-loading-dark.gif" height=20/> CryptoStoreAI is aimed to analyze and react to data variation movements in the stock market and crypto market
 
 ## :hammer_and_wrench: Installation 
 
