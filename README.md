@@ -46,8 +46,9 @@ if __name__ == '__main__':
 
 ![](./img/BTCUSDT.PNG)
 ![](http://i.imgur.com/Ssfp7.gif)
-
-
+## Learn More
+Backend  : graql server https://github.com/chenak-a/servergoQbites
+frontend : react https://github.com/chenak-a/QbitesReact
 ## :pirate_flag: License
 [MIT](https://choosealicense.com/licenses/mit/)
 
